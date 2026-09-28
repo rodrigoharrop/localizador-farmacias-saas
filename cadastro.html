@@ -215,6 +215,24 @@
   .payment-cta .price-today small { font-size: 12px; font-weight: 500; color: var(--muted); }
   .payment-note { font-size: 11px; color: var(--muted); text-align: center; margin: 10px 0 0; }
 
+  .avista-extra { display: none; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
+  .plan-selector:has(input[value="anual_avista"]:checked) ~ .payment-cta .avista-extra { display: block; }
+  .avista-extra-divider { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 8px; }
+  .btn-secondary-avista {
+    display: block;
+    width: 100%;
+    text-align: center;
+    padding: 13px;
+    border-radius: 10px;
+    border: 1.5px solid var(--primary);
+    background: white;
+    color: var(--primary-dark);
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+  }
+  .btn-secondary-avista:hover { background: #F0F8F4; }
+
   .form-state { display: block; }
   .form-state.hidden { display: none; }
 
@@ -340,6 +358,13 @@
         <div class="payment-cta">
           <div class="price-today">R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small></div>
           <a class="btn btn-primary" id="btnPagarAtivacao" href="https://www.asaas.com/c/0cwnnhv5zbdtf1qt" target="_blank" onclick="return prepararPagamento()">Pagar Ativação →</a>
+
+          <div class="avista-extra">
+            <div class="avista-extra-divider">+ opcional</div>
+            <div class="price-today">R$ 931,20 <small>Anual à vista (-20% Pix) — cobre os próximos 12 meses</small></div>
+            <a class="btn btn-secondary-avista" href="https://www.asaas.com/c/d3kdb6m7nvcj8yzk" target="_blank" onclick="return avisarPlanoAvista()">Pagar Anual à Vista →</a>
+          </div>
+
           <p class="payment-note">🔒 Pagamento seguro via Asaas — o plano escolhido é enviado automaticamente pro WhatsApp</p>
         </div>
       </div>
@@ -424,6 +449,13 @@
       // segue normalmente para o checkout de pagamento no Asaas
       const plano = PLANOS[planoSelecionado()];
       const texto = `Olá! Estou pagando a Ativação do Localizador de Farmácias (R$197,00, já com a 1ª mensalidade).\n\nPlano escolhido a partir do 2º mês: ${plano}`;
+      window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
+      return true;
+    }
+
+    function avisarPlanoAvista() {
+      // Aviso separado para o pagamento opcional do Anual à Vista (cobre os próximos 12 meses de uma vez)
+      const texto = `Olá! Estou pagando o Plano Anual à Vista do Localizador de Farmácias (R$931,20, com 20% OFF no Pix) — cobre os próximos 12 meses.`;
       window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
       return true;
     }
