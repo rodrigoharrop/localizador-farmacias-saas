@@ -8,7 +8,6 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   .brand-mark { display: flex; justify-content: center; margin-bottom: 18px; }
   .brand-mark svg { height: 28px; width: auto; }
@@ -352,34 +351,26 @@
   <script>
     // Número de WhatsApp do responsável pelo Localizador (formato internacional, só números)
     const WHATSAPP_DONO = '5585997056733';
-    const EMAIL_NOTIFICACAO = 'xdigital.ag@gmail.com';
 
     // Links de pagamento no Asaas
     const ASAAS_LINK_ATIVACAO = 'https://www.asaas.com/c/0cwnnhv5zbdtf1qt';
     const ASAAS_LINK_ANUAL_AVISTA = 'https://www.asaas.com/c/d3kdb6m7nvcj8yzk';
 
-    // TODO: preencher depois de criar uma conta gratuita em emailjs.com
-    // (Public Key em Account > General; Service ID em Email Services; Template ID em Email Templates)
-    const EMAILJS_PUBLIC_KEY = 'SUA_PUBLIC_KEY_AQUI';
-    const EMAILJS_SERVICE_ID = 'SEU_SERVICE_ID_AQUI';
-    const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID_AQUI';
-    const emailjsConfigurado = !EMAILJS_PUBLIC_KEY.startsWith('SUA_') && typeof emailjs !== 'undefined';
-    if (emailjsConfigurado) {
-      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
-    }
-
-    function enviarEmailNotificacao(dados) {
-      if (!emailjsConfigurado) {
-        console.warn('EmailJS ainda não configurado — pulando envio de email de notificação.');
-        return;
+    // Notifica por email (via função serverless /api/notify-lead, que usa o Resend).
+    // Só funciona quando o site está rodando na Vercel (não no GitHub Pages, que é 100% estático).
+    async function enviarEmailNotificacao(dados) {
+      try {
+        const resp = await fetch('/api/notify-lead', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(dados)
+        });
+        if (!resp.ok) {
+          console.error('Notificação por email falhou:', await resp.text());
+        }
+      } catch (err) {
+        console.error('Erro ao chamar /api/notify-lead:', err);
       }
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
-        to_email: EMAIL_NOTIFICACAO,
-        nome: dados.nome,
-        whatsapp: dados.whatsapp,
-        email: dados.email,
-        regiao: dados.regiao || '-'
-      }).catch(err => console.error('Erro ao enviar email de notificação:', err));
     }
 
     function validarEmail(email) {
