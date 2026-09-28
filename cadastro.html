@@ -158,6 +158,26 @@
   .btn-primary:hover { background: var(--primary-dark); }
   .btn-disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
 
+  .payment-options { display: flex; flex-direction: column; gap: 10px; margin-bottom: 12px; }
+  .payment-btn {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border: 1.5px solid var(--primary);
+    border-radius: 10px;
+    background: white;
+    text-decoration: none;
+    transition: background 0.15s ease;
+  }
+  .payment-btn:hover { background: #F0F8F4; }
+  .payment-label { font-size: 13px; font-weight: 600; color: var(--ink); line-height: 1.3; }
+  .payment-label small { display: block; font-weight: 400; color: var(--muted); font-size: 11px; margin-top: 2px; }
+  .payment-price { font-size: 17px; font-weight: 700; color: var(--primary-dark); white-space: nowrap; }
+  .payment-price small { font-size: 11px; font-weight: 500; }
+  .payment-note { font-size: 11px; color: var(--muted); text-align: center; margin-bottom: 0; }
+
   .form-state { display: block; }
   .form-state.hidden { display: none; }
 
@@ -232,11 +252,28 @@
         <a class="btn btn-primary" id="linkFormulario" href="farmacias.html">Preencher farmácias da região →</a>
       </div>
 
-      <div class="next-step disabled">
-        <div class="tag">Em breve</div>
-        <h4>💳 Pagamento da ativação</h4>
-        <p>O link de pagamento (Asaas) será enviado junto com a confirmação, no WhatsApp.</p>
-        <span class="btn btn-disabled">Disponível em breve</span>
+      <div class="next-step">
+        <div class="tag">Ative sua conta</div>
+        <h4>💳 Escolha como pagar</h4>
+        <p>Por enquanto o botão abre o WhatsApp pra confirmarmos o pagamento — em breve, link automático via Asaas.</p>
+        <div class="payment-options">
+          <!-- TODO: trocar href pelo link de pagamento único do Asaas (Ativação R$97) -->
+          <a class="payment-btn" href="https://wa.me/5585997056733?text=Ol%C3%A1!%20Quero%20pagar%20a%20Ativa%C3%A7%C3%A3o%20do%20Localizador%20de%20Farm%C3%A1cias%20(R%24%2097%2C00)" target="_blank">
+            <span class="payment-label">Ativação<small>pagamento único</small></span>
+            <span class="payment-price">R$ 97<small>,00</small></span>
+          </a>
+          <!-- TODO: trocar href pelo link de assinatura anual do Asaas (R$97/mês) -->
+          <a class="payment-btn" href="https://wa.me/5585997056733?text=Ol%C3%A1!%20Quero%20o%20Plano%20Anual%20do%20Localizador%20de%20Farm%C3%A1cias%20(R%24%2097%2C00%2Fm%C3%AAs)" target="_blank">
+            <span class="payment-label">Plano Anual<small>fidelidade 12 meses</small></span>
+            <span class="payment-price">R$ 97<small>,00/mês</small></span>
+          </a>
+          <!-- TODO: trocar href pelo link de assinatura mensal do Asaas (R$127/mês) -->
+          <a class="payment-btn" href="https://wa.me/5585997056733?text=Ol%C3%A1!%20Quero%20o%20Plano%20Mensal%20do%20Localizador%20de%20Farm%C3%A1cias%20(R%24%20127%2C00%2Fm%C3%AAs)" target="_blank">
+            <span class="payment-label">Plano Mensal<small>sem fidelidade</small></span>
+            <span class="payment-price">R$ 127<small>,00/mês</small></span>
+          </a>
+        </div>
+        <p class="payment-note">🔒 Pagamento automático via Asaas em breve — hoje confirmamos direto no WhatsApp</p>
       </div>
     </div>
 
