@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cadastro de Farmácias da Região</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+  :root {
+    --primary: #0F7D3F;
+    --primary-dark: #0B5C2E;
+    --ink: #0F0F0F;
+    --bg: #FAFAFA;
+    --card: #FFFFFF;
+    --muted: #5B6B66;
+    --border: #E6ECE9;
+    --warn-bg: #FFF7E6;
+    --warn-text: #8A5B00;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    padding: 0 0 60px;
+  }
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 40px 20px 36px;
+    text-align: center;
+  }
+  .hero h1 { font-size: 24px; margin-bottom: 8px; letter-spacing: -0.3px; }
+  .hero p { font-size: 14px; opacity: 0.92; max-width: 480px; margin: 0 auto; }
+
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px; }
+
+  .instructions {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-top: -20px;
+    margin-bottom: 24px;
+  }
+  .instructions h3 { font-size: 14px; margin-bottom: 10px; }
+  .instructions ol { padding-left: 18px; }
+  .instructions li { font-size: 13px; color: var(--muted); padding: 3px 0; }
+  .instructions strong { color: var(--ink); }
+
+  .info-rep {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+  }
+  .info-rep .full { grid-column: 1 / -1; }
+  .field label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin-bottom: 4px; }
+  .field input, .field select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--ink);
+    background: white;
+  }
+  .field input:focus, .field select:focus { outline: 2px solid var(--primary); outline-offset: 1px; }
+
+  .table-section {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 20px;
+  }
+  .table-section h3 { font-size: 15px; margin-bottom: 14px; }
+
+  .upload-box {
+    border: 1.5px dashed var(--primary);
+    background: #F0F8F4;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+  .upload-box input[type="file"] {
+    display: block;
+    margin: 10px auto 0;
+    font-size: 13px;
+    max-width: 100%;
+  }
+  .upload-status { font-size: 13px; font-weight: 600; margin-top: 10px; min-height: 18px; }
+  .upload-status.ok { color: var(--primary-dark); }
+  .upload-status.err { color: #C4432B; }
+  .modelo-link {
+    display: inline-block;
+    margin-top: 10px;
+    font-size: 12px;
+    color: var(--primary-dark);
+    text-decoration: underline;
+    cursor: pointer;
+    background: none;
+    border: none;
+  }
+  .divider-or {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin: 18px 0;
+    position: relative;
+  }
+  .divider-or::before, .divider-or::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    width: 40%;
+    height: 1px;
+    background: var(--border);
+  }
+  .divider-or::before { left: 0; }
+  .divider-or::after { right: 0; }
+
+  .pharmacy-row {
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px;
+    margin-bottom: 12px;
+    position: relative;
+  }
+  .pharmacy-row .row-num {
+    position: absolute;
+    top: -10px;
+    left: 12px;
+    background: var(--primary);
+    color: white;
+    font-size: 11px;
+    font-weight: 700;
+    padding: 2px 8px;
+    border-radius: 10px;
+  }
+  .row-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .row-grid .full { grid-column: 1 / -1; }
+  .row-grid label { display: block; font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 3px; }
+  .row-grid input, .row-grid select {
+    width: 100%;
+    padding: 8px 10px;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    font-size: 13px;
+  }
+  .remove-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: none;
+    border: none;
+    color: #C4432B;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    padding: 4px 8px;
+  }
+  .remove-btn:hover { text-decoration: underline; }
+
+  .add-btn {
+    width: 100%;
+    padding: 14px;
+    border: 1.5px dashed var(--primary);
+    background: #F0F8F4;
+    color: var(--primary-dark);
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .add-btn:hover { background: #E4F3EA; }
+
+  .actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 12px;
+  }
+  .btn {
+    padding: 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-align: center;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-secondary { background: white; color: var(--primary-dark); border: 1.5px solid var(--primary); }
+  .btn-secondary:hover { background: #F0F8F4; }
+
+  .counter {
+    text-align: center;
+    font-size: 12px;
+    color: var(--muted);
+    margin-bottom: 20px;
+  }
+  .counter strong { color: var(--primary-dark); }
+
+  .toast {
+    position: fixed;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(100px);
+    background: var(--primary-dark);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+    z-index: 10;
+  }
+  .toast.show { transform: translateX(-50%) translateY(0); }
+
+  @media (max-width: 560px) {
+    .info-rep, .row-grid { grid-template-columns: 1fr; }
+    .actions { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <h1>📋 Cadastro de Farmácias Parceiras</h1>
+    <p>Preencha com as farmácias da sua região — leva 5 minutos e acelera a ativação do seu Localizador</p>
+  </div>
+
+  <div class="wrap">
+
+    <div class="instructions">
+      <h3>Como preencher</h3>
+      <ol>
+        <li><strong>Preencha seus dados</strong> no topo (nome e região)</li>
+        <li><strong>Já tem uma planilha?</strong> Suba o arquivo e preenchemos tudo sozinho</li>
+        <li><strong>Não tem?</strong> Adicione cada farmácia manualmente clicando em "+ Adicionar farmácia"</li>
+        <li>No mínimo: <strong>nome, endereço, bairro, cidade e rede</strong></li>
+        <li>No final, clique em <strong>"Baixar CSV"</strong> ou <strong>"Copiar para WhatsApp"</strong> e envie pra gente</li>
+      </ol>
+    </div>
+
+    <div class="info-rep">
+      <div class="field full">
+        <label>Seu nome</label>
+        <input type="text" id="repNome" placeholder="Ex: João Silva">
+      </div>
+      <div class="field">
+        <label>Região/Cidade principal</label>
+        <input type="text" id="repRegiao" placeholder="Ex: Fortaleza-CE">
+      </div>
+      <div class="field">
+        <label>WhatsApp / Email de contato</label>
+        <input type="text" id="repContato" placeholder="(00) 00000-0000">
+      </div>
+    </div>
+
+    <div class="table-section">
+      <h3>📤 Já tem uma planilha pronta?</h3>
+      <div class="upload-box">
+        <div style="font-size:13px; color: var(--muted);">
+          Envie um arquivo <strong>CSV ou Excel (.xlsx)</strong> com suas farmácias — preenchemos tudo automaticamente.<br>
+          Colunas esperadas: <strong>Nome, Rede, Telefone, Endereço, Bairro, Cidade</strong> (a ordem não importa)
+        </div>
+        <input type="file" id="fileUpload" accept=".csv,.xlsx,.xls" onchange="handleFileUpload(event)">
+        <div class="upload-status" id="uploadStatus"></div>
+        <button class="modelo-link" onclick="baixarModelo()">📄 Não tem planilha? Baixe um modelo em branco</button>
+      </div>
+    </div>
+
+    <div class="divider-or">ou preencha manualmente abaixo</div>
+
+    <div class="table-section">
+      <h3>Farmácias parceiras</h3>
+      <div id="pharmacyList"></div>
+      <button class="add-btn" onclick="addPharmacy()">+ Adicionar farmácia</button>
+    </div>
+
+    <div class="counter"><strong id="pharmacyCount">0</strong> farmácias cadastradas</div>
+
+    <div class="actions">
+      <button class="btn btn-primary" onclick="baixarCSV()">📥 Baixar CSV</button>
+      <button class="btn btn-secondary" onclick="copiarWhatsApp()">💬 Copiar para WhatsApp</button>
+    </div>
+
+  </div>
+
+  <div class="toast" id="toast">Copiado!</div>
+
+  <script>
+    let pharmacyCounter = 0;
+
+    const redes = ["Pague Menos", "Drogasil", "Extrafarma", "Outra"];
+
+    function escapeHtml(str) {
+      return (str || '').toString()
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+    }
+
+    function normalizeText(s) {
+      return (s || '').toString().trim().toLowerCase()
+        .normalize('NFD').replace(/[̀-ͯ]/g, '');
+    }
+
+    function matchRede(value) {
+      const norm = normalizeText(value);
+      if (!norm) return redes[0];
+      const found = redes.find(r => normalizeText(r) === norm || norm.includes(normalizeText(r)));
+      return found || 'Outra';
+    }
+
+    function addPharmacy(prefill) {
+      prefill = prefill || {};
+      pharmacyCounter++;
+      const redeValue = matchRede(prefill.rede);
+      const div = document.createElement('div');
+      div.className = 'pharmacy-row';
+      div.id = `pharmacy-${pharmacyCounter}`;
+      div.innerHTML = `
+        <span class="row-num">#${pharmacyCounter}</span>
+        <button class="remove-btn" onclick="removePharmacy(${pharmacyCounter})">✕ Remover</button>
+        <div class="row-grid">
+          <div class="full">
+            <label>Nome da farmácia</label>
+            <input type="text" class="f-nome" placeholder="Ex: Pague Menos Aldeota" value="${escapeHtml(prefill.nome)}">
+          </div>
+          <div>
+            <label>Rede</label>
+            <select class="f-rede">
+              ${redes.map(r => `<option value="${r}" ${r === redeValue ? 'selected' : ''}>${r}</option>`).join('')}
+            </select>
+          </div>
+          <div>
+            <label>Telefone (opcional)</label>
+            <input type="text" class="f-telefone" placeholder="(00) 0000-0000" value="${escapeHtml(prefill.telefone)}">
+          </div>
+          <div class="full">
+            <label>Endereço</label>
+            <input type="text" class="f-endereco" placeholder="Rua, número" value="${escapeHtml(prefill.endereco)}">
+          </div>
+          <div>
+            <label>Bairro</label>
+            <input type="text" class="f-bairro" placeholder="Ex: Aldeota" value="${escapeHtml(prefill.bairro)}">
+          </div>
+          <div>
+            <label>Cidade</label>
+            <input type="text" class="f-cidade" placeholder="Ex: Fortaleza" value="${escapeHtml(prefill.cidade)}">
+          </div>
+        </div>
+      `;
+      document.getElementById('pharmacyList').appendChild(div);
+      updateCounter();
+    }
+
+    function removePharmacy(id) {
+      const el = document.getElementById(`pharmacy-${id}`);
+      if (el) el.remove();
+      updateCounter();
+    }
+
+    function updateCounter() {
+      const count = document.querySelectorAll('.pharmacy-row').length;
+      document.getElementById('pharmacyCount').textContent = count;
+    }
+
+    function coletarDados() {
+      const rows = document.querySelectorAll('.pharmacy-row');
+      const farmacias = [];
+      rows.forEach(row => {
+        farmacias.push({
+          nome: row.querySelector('.f-nome').value.trim(),
+          rede: row.querySelector('.f-rede').value,
+          telefone: row.querySelector('.f-telefone').value.trim(),
+          endereco: row.querySelector('.f-endereco').value.trim(),
+          bairro: row.querySelector('.f-bairro').value.trim(),
+          cidade: row.querySelector('.f-cidade').value.trim(),
+        });
+      });
+      return {
+        repNome: document.getElementById('repNome').value.trim(),
+        repRegiao: document.getElementById('repRegiao').value.trim(),
+        repContato: document.getElementById('repContato').value.trim(),
+        farmacias
+      };
+    }
+
+    async function downloadCsvFile(csv, filename, mensagemSucesso) {
+      // Dentro do Claude (Artifact): usa a capability de downloads
+      if (window.claude && typeof window.claude.use === 'function') {
+        try {
+          const downloads = await window.claude.use('downloads');
+          if (downloads) {
+            const result = await downloads.save({ filename, data: csv });
+            if (result && result.saved === false) {
+              showToast('Download cancelado.');
+            } else {
+              showToast(mensagemSucesso);
+            }
+            return;
+          }
+        } catch (e) {
+          // segue para o fallback abaixo
+        }
+      }
+
+      // Fora do Claude (arquivo aberto direto / site publicado): download via blob
+      const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = filename;
+      link.click();
+      URL.revokeObjectURL(url);
+      showToast(mensagemSucesso);
+    }
+
+    async function baixarCSV() {
+      const dados = coletarDados();
+      if (dados.farmacias.length === 0) {
+        showToast('Adicione ao menos uma farmácia antes de baixar');
+        return;
+      }
+      let csv = 'Nome,Rede,Telefone,Endereco,Bairro,Cidade\n';
+      dados.farmacias.forEach(f => {
+        csv += `"${f.nome}","${f.rede}","${f.telefone}","${f.endereco}","${f.bairro}","${f.cidade}"\n`;
+      });
+      const nomeArquivo = (dados.repNome || 'representante').toLowerCase().replace(/[^a-z0-9]/g, '_');
+      await downloadCsvFile(csv, `farmacias_${nomeArquivo}.csv`, 'CSV baixado! Envie o arquivo para o contato do Localizador.');
+    }
+
+    function baixarModelo() {
+      const csv = 'Nome,Rede,Telefone,Endereco,Bairro,Cidade\n' +
+        'Farmacia Exemplo Centro,Pague Menos,(00) 0000-0000,Rua Exemplo 123,Centro,Sua Cidade\n' +
+        'Farmacia Exemplo Bairro,Drogasil,,Av Exemplo 456,Outro Bairro,Sua Cidade\n';
+      downloadCsvFile(csv, 'modelo_farmacias.csv', 'Modelo baixado! Preencha e depois suba o arquivo aqui.');
+    }
+
+    const HEADER_ALIASES = {
+      nome: ['nome', 'farmacia', 'nomedafarmacia', 'loja', 'estabelecimento'],
+      rede: ['rede', 'network', 'bandeira'],
+      telefone: ['telefone', 'tel', 'fone', 'contato', 'whatsapp', 'celular'],
+      endereco: ['endereco', 'rua', 'logradouro', 'end'],
+      bairro: ['bairro'],
+      cidade: ['cidade', 'municipio', 'cidademunicipio'],
+    };
+
+    function mapRowToPharmacy(row) {
+      const normalizedRow = {};
+      Object.keys(row).forEach(key => {
+        const normKey = normalizeText(key).replace(/[^a-z0-9]/g, '');
+        normalizedRow[normKey] = row[key];
+      });
+      const result = {};
+      Object.keys(HEADER_ALIASES).forEach(field => {
+        let value = '';
+        for (const alias of HEADER_ALIASES[field]) {
+          const foundKey = Object.keys(normalizedRow).find(k => k === alias || k.includes(alias));
+          if (foundKey && normalizedRow[foundKey]) { value = normalizedRow[foundKey]; break; }
+        }
+        result[field] = (value || '').toString().trim();
+      });
+      return result;
+    }
+
+    async function handleFileUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      const statusEl = document.getElementById('uploadStatus');
+      statusEl.className = 'upload-status';
+      statusEl.textContent = 'Lendo arquivo...';
+
+      try {
+        if (typeof XLSX === 'undefined') {
+          statusEl.className = 'upload-status err';
+          statusEl.textContent = '⚠️ Não foi possível carregar o leitor de planilhas. Tente novamente ou preencha manualmente.';
+          return;
+        }
+        const isCsv = /\.csv$/i.test(file.name);
+        let workbook;
+        if (isCsv) {
+          // Lê como texto UTF-8 para preservar acentuação corretamente
+          const text = await file.text();
+          workbook = XLSX.read(text, { type: 'string' });
+        } else {
+          const buffer = await file.arrayBuffer();
+          workbook = XLSX.read(buffer, { type: 'array' });
+        }
+        const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
+        const rows = XLSX.utils.sheet_to_json(firstSheet, { defval: '' });
+
+        if (!rows.length) {
+          statusEl.className = 'upload-status err';
+          statusEl.textContent = '⚠️ Não encontramos linhas nesse arquivo. Confira se a primeira linha tem os títulos das colunas.';
+          return;
+        }
+
+        // Remove as linhas em branco atuais antes de importar
+        document.querySelectorAll('.pharmacy-row').forEach(el => el.remove());
+        pharmacyCounter = 0;
+
+        let importadas = 0;
+        rows.forEach(row => {
+          const mapped = mapRowToPharmacy(row);
+          if (mapped.nome) {
+            addPharmacy(mapped);
+            importadas++;
+          }
+        });
+        updateCounter();
+
+        if (importadas === 0) {
+          statusEl.className = 'upload-status err';
+          statusEl.textContent = '⚠️ Não conseguimos identificar a coluna "Nome". Confira o modelo de planilha.';
+          addPharmacy(); addPharmacy(); addPharmacy();
+        } else {
+          statusEl.className = 'upload-status ok';
+          statusEl.textContent = `✅ ${importadas} farmácia(s) importada(s)! Revise abaixo antes de enviar.`;
+          showToast(`${importadas} farmácias importadas da planilha`);
+        }
+      } catch (e) {
+        statusEl.className = 'upload-status err';
+        statusEl.textContent = '⚠️ Não conseguimos ler esse arquivo. Confira se é um CSV ou Excel (.xlsx) válido.';
+      }
+    }
+
+    function copiarWhatsApp() {
+      const dados = coletarDados();
+      if (dados.farmacias.length === 0) {
+        showToast('Adicione ao menos uma farmácia antes de copiar');
+        return;
+      }
+      let texto = `📋 *Cadastro de Farmácias — Localizador*\n\n`;
+      texto += `👤 Representante: ${dados.repNome || '-'}\n`;
+      texto += `📍 Região: ${dados.repRegiao || '-'}\n`;
+      texto += `📞 Contato: ${dados.repContato || '-'}\n\n`;
+      texto += `🏥 Farmácias (${dados.farmacias.length}):\n\n`;
+      dados.farmacias.forEach((f, i) => {
+        texto += `${i + 1}. *${f.nome || '-'}* (${f.rede})\n`;
+        texto += `   ${f.endereco || '-'}, ${f.bairro || '-'}, ${f.cidade || '-'}\n`;
+        if (f.telefone) texto += `   Tel: ${f.telefone}\n`;
+        texto += `\n`;
+      });
+
+      navigator.clipboard.writeText(texto).then(() => {
+        showToast('Copiado! Cole no WhatsApp e envie.');
+      }).catch(() => {
+        showToast('Não foi possível copiar automaticamente. Selecione o texto manualmente.');
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
+
+    // Começa com 3 linhas vazias para facilitar
+    addPharmacy();
+    addPharmacy();
+    addPharmacy();
+  </script>
+
+</body>
+</html>

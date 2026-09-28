@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Localizador de Farmácias Parceiras — Proposta</title>
+<style>
+  :root {
+    --primary: #0F7D3F;
+    --primary-dark: #0B5C2E;
+    --ink: #0F0F0F;
+    --bg: #FAFAFA;
+    --card: #FFFFFF;
+    --muted: #5B6B66;
+    --border: #E6ECE9;
+    --warn-bg: #FFF7E6;
+    --warn-text: #8A5B00;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap { max-width: 880px; margin: 0 auto; padding: 0 20px; }
+
+  /* HERO */
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 64px 20px 56px;
+    text-align: center;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+    margin-bottom: 24px;
+  }
+  .hero h1 {
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.5px;
+    line-height: 1.2;
+    max-width: 640px;
+    margin: 0 auto 16px;
+  }
+  .hero p {
+    font-size: 16px;
+    opacity: 0.92;
+    max-width: 520px;
+    margin: 0 auto;
+  }
+
+  section { padding: 56px 0; }
+
+  /* PROBLEMA / SOLUÇÃO */
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .panel {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 24px;
+  }
+  .panel h3 { font-size: 16px; margin-bottom: 12px; color: var(--primary-dark); }
+  .panel ul { list-style: none; }
+  .panel li { font-size: 14px; color: var(--muted); padding: 8px 0; padding-left: 24px; position: relative; }
+  .panel.problema li::before { content: "✕"; position: absolute; left: 0; color: #C4432B; font-weight: 700; }
+  .panel.solucao li::before { content: "✓"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+
+  h2.section-title {
+    font-size: 24px;
+    font-weight: 700;
+    letter-spacing: -0.3px;
+    text-align: center;
+    margin-bottom: 8px;
+  }
+  p.section-sub {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  /* COMO FUNCIONA */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .step { text-align: center; padding: 8px; }
+  .step-num {
+    width: 36px; height: 36px;
+    background: var(--primary);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 700; font-size: 15px;
+    margin: 0 auto 14px;
+  }
+  .step h4 { font-size: 14px; margin-bottom: 6px; }
+  .step p { font-size: 13px; color: var(--muted); }
+
+  /* PRICING */
+  .pricing-wrap { background: var(--card); border-radius: 16px; border: 1px solid var(--border); overflow: hidden; }
+  .pricing-header { background: #F0F8F4; padding: 24px 32px; border-bottom: 1px solid var(--border); }
+  .pricing-header strong { display: block; font-size: 18px; color: var(--primary-dark); margin-bottom: 4px; }
+  .pricing-header span { font-size: 13px; color: var(--muted); }
+
+  .pricing-cards { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; background: var(--border); }
+  .pcard { background: var(--card); padding: 28px 24px; }
+  .pcard .tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--primary); margin-bottom: 8px; }
+  .pcard .price { font-size: 32px; font-weight: 700; letter-spacing: -0.5px; margin-bottom: 4px; }
+  .pcard .price span { font-size: 14px; font-weight: 500; color: var(--muted); }
+  .pcard .desc { font-size: 13px; color: var(--muted); margin-bottom: 16px; }
+  .pcard ul { list-style: none; }
+  .pcard li { font-size: 13px; padding: 6px 0; padding-left: 20px; position: relative; color: var(--ink); }
+  .pcard li::before { content: "✓"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
+
+  .monthly-strip {
+    background: var(--primary-dark);
+    color: white;
+    padding: 20px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+  }
+  .monthly-strip .label { font-size: 13px; opacity: 0.85; }
+  .monthly-strip .value { font-size: 26px; font-weight: 700; }
+  .monthly-strip .value span { font-size: 13px; font-weight: 500; opacity: 0.85; }
+
+  .total-example {
+    text-align: center;
+    padding: 20px;
+    font-size: 13px;
+    color: var(--muted);
+    background: #FBFBFB;
+  }
+  .total-example strong { color: var(--ink); }
+
+  /* CTA */
+  .cta {
+    text-align: center;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 40px 24px;
+  }
+  .cta h3 { font-size: 20px; margin-bottom: 8px; }
+  .cta p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+  .cta-buttons { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  .btn {
+    display: inline-block;
+    padding: 14px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(15,125,63,0.3); }
+  .btn-secondary { background: white; color: var(--primary-dark); border: 1.5px solid var(--primary); }
+  .btn-secondary:hover { background: #F0F8F4; }
+
+  /* FAQ */
+  .faq-item { border-bottom: 1px solid var(--border); padding: 18px 0; }
+  .faq-item:last-child { border-bottom: none; }
+  .faq-item h4 { font-size: 14px; margin-bottom: 6px; }
+  .faq-item p { font-size: 13px; color: var(--muted); }
+
+  footer { text-align: center; padding: 32px 20px; font-size: 12px; color: var(--muted); }
+
+  @media (max-width: 640px) {
+    .hero { padding: 48px 20px 40px; }
+    .hero h1 { font-size: 24px; }
+    section { padding: 40px 0; }
+    .grid-2, .pricing-cards, .steps { grid-template-columns: 1fr; }
+    .pricing-cards { gap: 1px; }
+    .monthly-strip { flex-direction: column; align-items: flex-start; text-align: left; }
+    .cta-buttons { flex-direction: column; }
+    .btn { width: 100%; text-align: center; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <span class="badge">✅ SISTEMA JÁ EM USO E VALIDADO</span>
+    <h1>Leve o Localizador de Farmácias Parceiras para a sua região</h1>
+    <p>O mesmo sistema que já está rodando em Fortaleza — com mapa interativo, geolocalização e QR code — pronto para funcionar na sua área de atuação.</p>
+  </div>
+
+  <div class="wrap">
+
+    <section>
+      <h2 class="section-title">Por que isso importa para você</h2>
+      <p class="section-sub">Um jeito profissional de mostrar onde seu paciente/cliente pode encontrar o produto</p>
+      <div class="grid-2">
+        <div class="panel problema">
+          <h3>Sem o sistema</h3>
+          <ul>
+            <li>Cliente esquece o nome das farmácias parceiras</li>
+            <li>Você repete o mesmo endereço várias vezes por dia</li>
+            <li>Não existe nada com a sua cara para entregar junto com a amostra</li>
+            <li>Nenhuma forma de saber se as pessoas realmente usam a informação</li>
+          </ul>
+        </div>
+        <div class="panel solucao">
+          <h3>Com o Localizador</h3>
+          <ul>
+            <li>Um QR code — o cliente escaneia e já vê tudo</li>
+            <li>Mapa com a localização mais próxima automaticamente</li>
+            <li>Farmácias organizadas por rede, com endereço e rota no Google Maps</li>
+            <li>Site com a sua identidade, no ar em poucos dias</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top: 0;">
+      <h2 class="section-title">Como funciona</h2>
+      <p class="section-sub">Do pedido ao QR code pronto</p>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <h4>Você nos envia a lista</h4>
+          <p>Farmácias parceiras da sua região (nome, endereço, rede) — usamos um formulário simples</p>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <h4>Personalizamos e ativamos</h4>
+          <p>Cadastramos os dados, colocamos no ar e geramos seu QR code exclusivo</p>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <h4>Você recebe pronto pra usar</h4>
+          <p>Link + QR code para imprimir e colar nas amostras/materiais</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top: 0;">
+      <h2 class="section-title">Investimento</h2>
+      <p class="section-sub">Pensado para representante autônomo — sem contrato de empresa, sem burocracia</p>
+
+      <div class="pricing-wrap">
+        <div class="pricing-header">
+          <strong>Escolha como quer montar a lista de farmácias</strong>
+          <span>O valor de ativação muda conforme quem faz o levantamento</span>
+        </div>
+        <div class="pricing-cards">
+          <div class="pcard">
+            <div class="tag">Mais econômico</div>
+            <div class="price">R$ 97<span>ativação única</span></div>
+            <div class="desc">Você já conhece as farmácias da sua região e nos envia a lista pronta (formulário rápido)</div>
+            <ul>
+              <li>Personalização com sua marca</li>
+              <li>Site no ar em até 3 dias úteis</li>
+              <li>QR code exclusivo gerado</li>
+              <li>Cadastro de até 30 farmácias</li>
+            </ul>
+          </div>
+          <div class="pcard">
+            <div class="tag">Fazemos por você</div>
+            <div class="price">R$ 197<span>ativação única</span></div>
+            <div class="desc">Nós pesquisamos e cadastramos as farmácias parceiras da sua região do zero</div>
+            <ul>
+              <li>Tudo do plano anterior</li>
+              <li>Levantamento e validação das farmácias</li>
+              <li>Organização por rede (Pague Menos, Drogasil, etc.)</li>
+              <li>Site no ar em até 7 dias úteis</li>
+            </ul>
+          </div>
+        </div>
+        <div class="monthly-strip">
+          <div>
+            <div class="label">Mensalidade única, igual para todo mundo</div>
+            <div class="value">R$ 197<span>/mês</span></div>
+          </div>
+          <div style="font-size:13px; opacity:0.85; max-width: 260px;">
+            Hospedagem, domínio, atualizações de farmácias e suporte incluídos
+          </div>
+        </div>
+        <div class="total-example">
+          Exemplo: se você já tem a lista pronta → <strong>R$ 97 de ativação + R$ 197 no primeiro mês = R$ 294 para começar</strong>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top: 0;">
+      <h2 class="section-title">Perguntas frequentes</h2>
+      <div class="panel">
+        <div class="faq-item">
+          <h4>Preciso saber programar ou mexer em site?</h4>
+          <p>Não. Você só envia a lista de farmácias (ou pede pra gente levantar) e recebe o link e o QR code prontos.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Posso cancelar quando quiser?</h4>
+          <p>Sim, a mensalidade não tem fidelidade obrigatória. Você cancela e o site fica fora do ar.</p>
+        </div>
+        <div class="faq-item">
+          <h4>Dá pra atualizar farmácias depois?</h4>
+          <p>Sim, isso está incluso na mensalidade — é só avisar quando uma farmácia fechar ou uma nova entrar na rede.</p>
+        </div>
+        <div class="faq-item">
+          <h4>O site é só meu ou compartilhado com outros representantes?</h4>
+          <p>É exclusivo pra sua região e sua marca — cada representante tem o seu próprio link e QR code.</p>
+        </div>
+      </div>
+    </section>
+
+    <section style="padding-top: 0;">
+      <div class="cta">
+        <h3>Pronto para ter o seu?</h3>
+        <p>Envie a lista das farmácias da sua região e comece a usar em poucos dias</p>
+        <div class="cta-buttons">
+          <a class="btn btn-primary" href="cadastro.html">🚀 Quero começar agora</a>
+          <a class="btn btn-secondary" href="https://wa.me/5585997056733?text=Ol%C3%A1!%20Quero%20saber%20mais%20sobre%20o%20Localizador%20de%20Farm%C3%A1cias%20para%20minha%20regi%C3%A3o" target="_blank">💬 Tirar dúvida antes</a>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <footer>
+    Localizador de Farmácias Parceiras — Sistema já validado em Fortaleza-CE
+  </footer>
+
+</body>
+</html>

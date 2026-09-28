@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quero o Localizador na minha região</title>
+<style>
+  :root {
+    --primary: #0F7D3F;
+    --primary-dark: #0B5C2E;
+    --ink: #0F0F0F;
+    --bg: #FAFAFA;
+    --card: #FFFFFF;
+    --muted: #5B6B66;
+    --border: #E6ECE9;
+    --error: #C4432B;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    line-height: 1.5;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 16px 60px; }
+
+  .hero {
+    background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+    color: white;
+    padding: 48px 20px 40px;
+    text-align: center;
+  }
+  .hero .badge {
+    display: inline-block;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    padding: 5px 14px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    margin-bottom: 18px;
+  }
+  .hero h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.3px; margin-bottom: 10px; }
+  .hero p { font-size: 14px; opacity: 0.92; max-width: 420px; margin: 0 auto; }
+
+  /* STEPS INDICATOR */
+  .steps-bar {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    padding: 20px 16px 0;
+  }
+  .step-pill {
+    font-size: 11px;
+    font-weight: 700;
+    padding: 6px 14px;
+    border-radius: 20px;
+    background: var(--border);
+    color: var(--muted);
+  }
+  .step-pill.active { background: var(--primary); color: white; }
+  .step-pill.done { background: #E4F3EA; color: var(--primary-dark); }
+
+  .card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px 24px;
+    margin-top: 20px;
+  }
+  .card h2 { font-size: 17px; margin-bottom: 4px; }
+  .card .sub { font-size: 13px; color: var(--muted); margin-bottom: 22px; }
+
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 6px; }
+  .field label .optional { font-weight: 400; color: var(--muted); font-size: 12px; }
+  .field input {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    font-size: 15px;
+    color: var(--ink);
+    background: white;
+  }
+  .field input:focus { outline: none; border-color: var(--primary); box-shadow: 0 0 0 3px rgba(15,125,63,0.12); }
+  .field input.invalid { border-color: var(--error); }
+  .field .error-msg { display: none; font-size: 12px; color: var(--error); margin-top: 5px; }
+  .field.has-error .error-msg { display: block; }
+  .field.has-error input { border-color: var(--error); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    border: none;
+    border-radius: 10px;
+    background: var(--primary);
+    color: white;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 4px;
+  }
+  .submit-btn:hover { background: var(--primary-dark); }
+  .submit-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+
+  .privacy-note {
+    font-size: 11px;
+    color: var(--muted);
+    text-align: center;
+    margin-top: 14px;
+  }
+
+  /* THANK YOU STATE */
+  .thanks { display: none; text-align: center; }
+  .thanks.show { display: block; }
+  .thanks .check {
+    width: 56px; height: 56px;
+    background: #E4F3EA;
+    color: var(--primary);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 18px;
+  }
+  .thanks h2 { font-size: 19px; margin-bottom: 8px; }
+  .thanks p { font-size: 14px; color: var(--muted); margin-bottom: 24px; }
+
+  .next-step {
+    background: #F0F8F4;
+    border: 1px solid #D3EADB;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: left;
+    margin-bottom: 14px;
+  }
+  .next-step .tag { font-size: 11px; font-weight: 700; color: var(--primary-dark); text-transform: uppercase; margin-bottom: 4px; }
+  .next-step h4 { font-size: 14px; margin-bottom: 4px; }
+  .next-step p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+  .next-step.disabled { opacity: 0.6; }
+  .next-step.disabled .tag { color: var(--muted); }
+
+  .btn {
+    display: inline-block;
+    width: 100%;
+    text-align: center;
+    padding: 13px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 700;
+    text-decoration: none;
+    cursor: pointer;
+    border: none;
+  }
+  .btn-primary { background: var(--primary); color: white; }
+  .btn-primary:hover { background: var(--primary-dark); }
+  .btn-disabled { background: var(--border); color: var(--muted); cursor: not-allowed; }
+
+  .form-state { display: block; }
+  .form-state.hidden { display: none; }
+
+  @media (max-width: 480px) {
+    .hero { padding: 36px 16px 32px; }
+    .hero h1 { font-size: 20px; }
+    .card { padding: 22px 18px; }
+  }
+</style>
+</head>
+<body>
+
+  <div class="hero">
+    <span class="badge">🚀 PASSO 1 DE 2</span>
+    <h1>Vamos levar o Localizador para a sua região</h1>
+    <p>Preencha seus dados para a gente reservar sua vaga e te chamar no WhatsApp com os próximos passos</p>
+  </div>
+
+  <div class="wrap">
+
+    <div class="steps-bar">
+      <span class="step-pill active">1. Seus dados</span>
+      <span class="step-pill">2. Farmácias da região</span>
+    </div>
+
+    <!-- FORMULÁRIO -->
+    <div class="card form-state" id="formState">
+      <h2>Seus dados de contato</h2>
+      <div class="sub">Leva menos de 1 minuto</div>
+
+      <form id="leadForm" onsubmit="return false;">
+        <div class="field" id="field-nome">
+          <label for="nome">Nome completo</label>
+          <input type="text" id="nome" placeholder="Ex: João Silva" autocomplete="name">
+          <div class="error-msg">Digite seu nome completo</div>
+        </div>
+
+        <div class="field" id="field-whatsapp">
+          <label for="whatsapp">WhatsApp</label>
+          <input type="tel" id="whatsapp" placeholder="(00) 00000-0000" autocomplete="tel" inputmode="tel">
+          <div class="error-msg">Digite um WhatsApp válido com DDD</div>
+        </div>
+
+        <div class="field" id="field-email">
+          <label for="email">Email</label>
+          <input type="email" id="email" placeholder="seuemail@exemplo.com" autocomplete="email" inputmode="email">
+          <div class="error-msg">Digite um email válido</div>
+        </div>
+
+        <div class="field">
+          <label for="regiao">Cidade/Região de atuação <span class="optional">(opcional)</span></label>
+          <input type="text" id="regiao" placeholder="Ex: Recife-PE">
+        </div>
+
+        <button type="button" class="submit-btn" id="submitBtn" onclick="enviarCadastro()">
+          Quero começar →
+        </button>
+        <div class="privacy-note">Seus dados vão direto para o responsável pelo Localizador, só para contato.</div>
+      </form>
+    </div>
+
+    <!-- AGRADECIMENTO -->
+    <div class="card thanks" id="thanksState">
+      <div class="check">✓</div>
+      <h2>Recebemos seus dados!</h2>
+      <p>Confirme o envio da mensagem que abrimos para você — assim que chegar, entramos em contato pelo WhatsApp.</p>
+
+      <div class="next-step">
+        <div class="tag">Adiante o processo</div>
+        <h4>📋 Já pode montar a lista de farmácias</h4>
+        <p>Enquanto combinamos os detalhes, você já pode preencher (ou subir a planilha) com as farmácias parceiras da sua região.</p>
+        <a class="btn btn-primary" id="linkFormulario" href="farmacias.html">Preencher farmácias da região →</a>
+      </div>
+
+      <div class="next-step disabled">
+        <div class="tag">Em breve</div>
+        <h4>💳 Pagamento da ativação</h4>
+        <p>O link de pagamento (Asaas) será enviado junto com a confirmação, no WhatsApp.</p>
+        <span class="btn btn-disabled">Disponível em breve</span>
+      </div>
+    </div>
+
+  </div>
+
+  <script>
+    // Número de WhatsApp do responsável pelo Localizador (formato internacional, só números)
+    const WHATSAPP_DONO = '5585997056733';
+    const EMAIL_DONO = 'rodrigo.harrop@gmail.com';
+
+    function validarEmail(email) {
+      return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+    }
+
+    function validarWhatsapp(valor) {
+      const digitos = valor.replace(/\D/g, '');
+      return digitos.length >= 10 && digitos.length <= 13;
+    }
+
+    function limparErro(campoId) {
+      document.getElementById(`field-${campoId}`).classList.remove('has-error');
+    }
+
+    function marcarErro(campoId) {
+      document.getElementById(`field-${campoId}`).classList.add('has-error');
+    }
+
+    ['nome', 'whatsapp', 'email'].forEach(id => {
+      document.getElementById(id).addEventListener('input', () => limparErro(id));
+    });
+
+    function enviarCadastro() {
+      const nome = document.getElementById('nome').value.trim();
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const email = document.getElementById('email').value.trim();
+      const regiao = document.getElementById('regiao').value.trim();
+
+      let valido = true;
+      if (nome.length < 3) { marcarErro('nome'); valido = false; } else { limparErro('nome'); }
+      if (!validarWhatsapp(whatsapp)) { marcarErro('whatsapp'); valido = false; } else { limparErro('whatsapp'); }
+      if (!validarEmail(email)) { marcarErro('email'); valido = false; } else { limparErro('email'); }
+
+      if (!valido) return;
+
+      const digitosWhats = whatsapp.replace(/\D/g, '');
+      let texto = `🆕 *Novo interessado — Localizador de Farmácias*\n\n`;
+      texto += `👤 Nome: ${nome}\n`;
+      texto += `📱 WhatsApp: ${whatsapp}\n`;
+      texto += `📧 Email: ${email}\n`;
+      if (regiao) texto += `📍 Região: ${regiao}\n`;
+
+      const urlWhats = `https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`;
+      window.open(urlWhats, '_blank');
+
+      mostrarAgradecimento(digitosWhats);
+    }
+
+    function mostrarAgradecimento() {
+      document.getElementById('formState').classList.add('hidden');
+      document.getElementById('thanksState').classList.add('show');
+      document.querySelectorAll('.step-pill')[0].classList.remove('active');
+      document.querySelectorAll('.step-pill')[0].classList.add('done');
+      document.querySelectorAll('.step-pill')[1].classList.add('active');
+    }
+  </script>
+
+</body>
+</html>
