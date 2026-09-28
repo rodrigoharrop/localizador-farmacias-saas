@@ -315,21 +315,21 @@
 
         <div class="plan-selector" id="planSelector">
           <label class="plan-option">
-            <input type="radio" name="plano" value="mensal" onchange="atualizarLinkPagamento()">
+            <input type="radio" name="plano" value="mensal">
             <span class="plan-option-body">
               <span class="plan-option-name">Mensal<small>sem fidelidade, cancela quando quiser</small></span>
               <span class="plan-option-price">R$ 127<small>,00/mês</small></span>
             </span>
           </label>
           <label class="plan-option">
-            <input type="radio" name="plano" value="anual" checked onchange="atualizarLinkPagamento()">
+            <input type="radio" name="plano" value="anual" checked>
             <span class="plan-option-body">
               <span class="plan-option-name">Anual<small>fidelidade 12 meses, cobrança mensal</small></span>
               <span class="plan-option-price">R$ 97<small>,00/mês</small></span>
             </span>
           </label>
           <label class="plan-option">
-            <input type="radio" name="plano" value="anual_avista" onchange="atualizarLinkPagamento()">
+            <input type="radio" name="plano" value="anual_avista">
             <span class="plan-option-body">
               <span class="plan-option-name">Anual à vista<span class="badge-discount">-20% Pix</span><small>pague uma vez, sem mensalidade depois</small></span>
               <span class="plan-option-price">R$ 931<small>,20</small></span>
@@ -339,9 +339,8 @@
 
         <div class="payment-cta">
           <div class="price-today">R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small></div>
-          <!-- TODO: trocar href pelo link de pagamento único do Asaas (Ativação R$197) -->
-          <a class="btn btn-primary" id="btnPagarAtivacao" href="#" target="_blank" onclick="return prepararPagamento()">Pagar Ativação →</a>
-          <p class="payment-note">🔒 Por enquanto o botão abre o WhatsApp pra confirmarmos o pagamento e o plano — em breve, link automático via Asaas</p>
+          <a class="btn btn-primary" id="btnPagarAtivacao" href="https://www.asaas.com/c/0cwnnhv5zbdtf1qt" target="_blank" onclick="return prepararPagamento()">Pagar Ativação →</a>
+          <p class="payment-note">🔒 Pagamento seguro via Asaas — o plano escolhido é enviado automaticamente pro WhatsApp</p>
         </div>
       </div>
     </div>
@@ -406,7 +405,6 @@
       document.querySelectorAll('.step-pill')[0].classList.remove('active');
       document.querySelectorAll('.step-pill')[0].classList.add('done');
       document.querySelectorAll('.step-pill')[1].classList.add('active');
-      atualizarLinkPagamento();
     }
 
     // Planos disponíveis a partir do 2º mês (a ativação de R$197 já cobre o 1º mês)
@@ -421,15 +419,12 @@
       return el ? el.value : 'anual';
     }
 
-    function atualizarLinkPagamento() {
-      const plano = PLANOS[planoSelecionado()];
-      const texto = `Olá! Quero pagar a Ativação do Localizador de Farmácias (R$197,00, já com a 1ª mensalidade).\n\nPlano escolhido a partir do 2º mês: ${plano}`;
-      const link = document.getElementById('btnPagarAtivacao');
-      if (link) link.href = `https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`;
-    }
-
     function prepararPagamento() {
-      atualizarLinkPagamento();
+      // Avisa o plano escolhido no WhatsApp (aba separada) enquanto o botão
+      // segue normalmente para o checkout de pagamento no Asaas
+      const plano = PLANOS[planoSelecionado()];
+      const texto = `Olá! Estou pagando a Ativação do Localizador de Farmácias (R$197,00, já com a 1ª mensalidade).\n\nPlano escolhido a partir do 2º mês: ${plano}`;
+      window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
       return true;
     }
   </script>
