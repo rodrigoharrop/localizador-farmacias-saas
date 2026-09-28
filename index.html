@@ -121,20 +121,6 @@
   .pcard li { font-size: 13px; padding: 6px 0; padding-left: 20px; position: relative; color: var(--ink); }
   .pcard li::before { content: "✓"; position: absolute; left: 0; color: var(--primary); font-weight: 700; }
 
-  .monthly-strip {
-    background: var(--primary-dark);
-    color: white;
-    padding: 20px 32px;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    flex-wrap: wrap;
-    gap: 12px;
-  }
-  .monthly-strip .label { font-size: 13px; opacity: 0.85; }
-  .monthly-strip .value { font-size: 26px; font-weight: 700; }
-  .monthly-strip .value span { font-size: 13px; font-weight: 500; opacity: 0.85; }
-
   .total-example {
     text-align: center;
     padding: 20px;
@@ -183,7 +169,6 @@
     section { padding: 40px 0; }
     .grid-2, .pricing-cards, .steps { grid-template-columns: 1fr; }
     .pricing-cards { gap: 1px; }
-    .monthly-strip { flex-direction: column; align-items: flex-start; text-align: left; }
     .cta-buttons { flex-direction: column; }
     .btn { width: 100%; text-align: center; }
   }
@@ -208,7 +193,7 @@
           <ul>
             <li>Cliente esquece o nome das farmácias parceiras</li>
             <li>Você repete o mesmo endereço várias vezes por dia</li>
-            <li>Não existe nada com a sua cara para entregar junto com a amostra</li>
+            <li>Nenhum material pronto para entregar junto com a amostra</li>
             <li>Nenhuma forma de saber se as pessoas realmente usam a informação</li>
           </ul>
         </div>
@@ -218,7 +203,7 @@
             <li>Um QR code — o cliente escaneia e já vê tudo</li>
             <li>Mapa com a localização mais próxima automaticamente</li>
             <li>Farmácias organizadas por rede, com endereço e rota no Google Maps</li>
-            <li>Site com a sua identidade, no ar em poucos dias</li>
+            <li>Site pronto e no ar em poucos dias</li>
           </ul>
         </div>
       </div>
@@ -230,13 +215,13 @@
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
-          <h4>Você nos envia a lista</h4>
-          <p>Farmácias parceiras da sua região (nome, endereço, rede) — usamos um formulário simples</p>
+          <h4>Você organiza e envia a lista</h4>
+          <p>As farmácias do seu próprio roteiro (nome, endereço, rede) — por planilha ou formulário simples</p>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <h4>Personalizamos e ativamos</h4>
-          <p>Cadastramos os dados, colocamos no ar e geramos seu QR code exclusivo</p>
+          <h4>Ativamos seu site</h4>
+          <p>Subimos a sua lista, colocamos no ar e geramos seu QR code exclusivo</p>
         </div>
         <div class="step">
           <div class="step-num">3</div>
@@ -252,44 +237,50 @@
 
       <div class="pricing-wrap">
         <div class="pricing-header">
-          <strong>Escolha como quer montar a lista de farmácias</strong>
-          <span>O valor de ativação muda conforme quem faz o levantamento</span>
+          <strong>Ativação única</strong>
+          <span>Você envia a lista de farmácias do seu roteiro, já organizada — a gente só coloca no ar</span>
+        </div>
+        <div class="pricing-cards" style="grid-template-columns: 1fr;">
+          <div class="pcard">
+            <div class="tag">Ativação</div>
+            <div class="price">R$ 97<span>pagamento único</span></div>
+            <div class="desc">Sem pesquisa, sem personalização de marca — você já sabe quais farmácias são do seu roteiro</div>
+            <ul>
+              <li>Site no ar em até 3 dias úteis</li>
+              <li>QR code exclusivo gerado</li>
+              <li>Cadastro das farmácias da sua lista</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="pricing-header">
+          <strong>Escolha o plano de mensalidade</strong>
+          <span>Hospedagem, domínio, atualizações de farmácias e suporte incluídos nos dois planos</span>
         </div>
         <div class="pricing-cards">
           <div class="pcard">
-            <div class="tag">Mais econômico</div>
-            <div class="price">R$ 97<span>ativação única</span></div>
-            <div class="desc">Você já conhece as farmácias da sua região e nos envia a lista pronta (formulário rápido)</div>
+            <div class="tag">Plano anual</div>
+            <div class="price">R$ 97<span>/mês</span></div>
+            <div class="desc">Fechando 12 meses — o valor mais baixo</div>
             <ul>
-              <li>Personalização com sua marca</li>
-              <li>Site no ar em até 3 dias úteis</li>
-              <li>QR code exclusivo gerado</li>
-              <li>Cadastro de até 30 farmácias</li>
+              <li>Mesmo valor todo mês, sem susto</li>
+              <li>Atualizações de farmácias incluídas</li>
+              <li>Suporte via WhatsApp</li>
             </ul>
           </div>
           <div class="pcard">
-            <div class="tag">Fazemos por você</div>
-            <div class="price">R$ 197<span>ativação única</span></div>
-            <div class="desc">Nós pesquisamos e cadastramos as farmácias parceiras da sua região do zero</div>
+            <div class="tag">Plano mensal</div>
+            <div class="price">R$ 127<span>/mês</span></div>
+            <div class="desc">Sem fidelidade — cancele quando quiser</div>
             <ul>
-              <li>Tudo do plano anterior</li>
-              <li>Levantamento e validação das farmácias</li>
-              <li>Organização por rede (Pague Menos, Drogasil, etc.)</li>
-              <li>Site no ar em até 7 dias úteis</li>
+              <li>Flexibilidade total</li>
+              <li>Atualizações de farmácias incluídas</li>
+              <li>Suporte via WhatsApp</li>
             </ul>
           </div>
         </div>
-        <div class="monthly-strip">
-          <div>
-            <div class="label">Mensalidade única, igual para todo mundo</div>
-            <div class="value">R$ 197<span>/mês</span></div>
-          </div>
-          <div style="font-size:13px; opacity:0.85; max-width: 260px;">
-            Hospedagem, domínio, atualizações de farmácias e suporte incluídos
-          </div>
-        </div>
         <div class="total-example">
-          Exemplo: se você já tem a lista pronta → <strong>R$ 97 de ativação + R$ 197 no primeiro mês = R$ 294 para começar</strong>
+          Exemplo no plano anual: <strong>R$ 97 de ativação + R$ 97 no primeiro mês = R$ 194 para começar</strong>
         </div>
       </div>
     </section>
@@ -299,19 +290,19 @@
       <div class="panel">
         <div class="faq-item">
           <h4>Preciso saber programar ou mexer em site?</h4>
-          <p>Não. Você só envia a lista de farmácias (ou pede pra gente levantar) e recebe o link e o QR code prontos.</p>
+          <p>Não. Você só envia a lista de farmácias do seu roteiro, já organizada, e recebe o link e o QR code prontos.</p>
         </div>
         <div class="faq-item">
           <h4>Posso cancelar quando quiser?</h4>
-          <p>Sim, a mensalidade não tem fidelidade obrigatória. Você cancela e o site fica fora do ar.</p>
+          <p>No plano mensal (R$127), sim — sem fidelidade. No plano anual (R$97/mês) o compromisso é de 12 meses, por isso o valor é menor.</p>
         </div>
         <div class="faq-item">
           <h4>Dá pra atualizar farmácias depois?</h4>
-          <p>Sim, isso está incluso na mensalidade — é só avisar quando uma farmácia fechar ou uma nova entrar na rede.</p>
+          <p>Sim, isso está incluso na mensalidade — é só enviar a lista atualizada quando uma farmácia fechar ou uma nova entrar no seu roteiro.</p>
         </div>
         <div class="faq-item">
           <h4>O site é só meu ou compartilhado com outros representantes?</h4>
-          <p>É exclusivo pra sua região e sua marca — cada representante tem o seu próprio link e QR code.</p>
+          <p>É exclusivo pra sua região — cada representante tem o seu próprio link, QR code e lista de farmácias.</p>
         </div>
       </div>
     </section>
