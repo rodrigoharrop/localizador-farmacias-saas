@@ -3,7 +3,7 @@
 // no projeto na Vercel (Settings > Environment Variables).
 
 const DESTINATARIO = 'xdigital.ag@gmail.com';
-const REMETENTE = process.env.RESEND_FROM || 'XLocalizador <onboarding@resend.dev>';
+const REMETENTE = process.env.RESEND_FROM || 'XLocalizador <notificacoes@form.agenciaxdigital.com.br>';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
