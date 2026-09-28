@@ -10,7 +10,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
 <style>
   .brand-mark { display: flex; justify-content: center; margin-bottom: 18px; }
-  .brand-mark svg { height: 28px; width: auto; }
+  .brand-mark svg { height: 46px; width: auto; }
   :root {
     --primary: #0F7D3F;
     --primary-dark: #0B5C2E;
@@ -300,7 +300,7 @@
     <div class="card thanks" id="thanksState">
       <div class="check">✓</div>
       <h2>Recebemos seus dados!</h2>
-      <p>Confirme o envio da mensagem que abrimos para você — assim que chegar, entramos em contato pelo WhatsApp.</p>
+      <p>Assim que possível, entramos em contato pelo WhatsApp para confirmar os próximos passos.</p>
 
       <div class="next-step">
         <div class="tag">Adiante o processo</div>
@@ -312,7 +312,7 @@
       <div class="next-step">
         <div class="tag">A partir do 2º mês</div>
         <h4>📅 Escolha seu plano</h4>
-        <p>Isso não é um pagamento agora — só define como vamos te cobrar depois dos primeiros 30 dias (já inclusos na ativação).</p>
+        <p>Isso não é um pagamento agora, só define como vamos te cobrar depois dos primeiros 30 dias (já inclusos na ativação).</p>
 
         <div class="plan-selector" id="planSelector">
           <label class="plan-option">
@@ -341,7 +341,7 @@
         <div class="payment-cta">
           <div class="price-today" id="resumoPrecoHoje">R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small></div>
           <a class="btn btn-primary" id="btnPagarAtivacao" href="https://www.asaas.com/c/0cwnnhv5zbdtf1qt" target="_blank" onclick="return prepararPagamento()">Pagar Ativação →</a>
-          <p class="payment-note">🔒 Pagamento seguro via Asaas — se escolher o Anual à Vista, as 2 cobranças abrem juntas nesse mesmo botão</p>
+          <p class="payment-note">🔒 Pagamento seguro via Asaas. Se escolher o Anual à Vista, as 2 cobranças abrem juntas nesse mesmo botão</p>
         </div>
       </div>
     </div>
@@ -423,9 +423,9 @@
 
     // Planos disponíveis a partir do 2º mês (a ativação de R$197 já cobre o 1º mês)
     const PLANOS = {
-      mensal: 'Plano Mensal — R$127,00/mês, sem fidelidade',
-      anual: 'Plano Anual — R$97,00/mês, fidelidade 12 meses (cobrança mensal)',
-      anual_avista: 'Plano Anual à Vista no Pix — R$931,20 com 20% OFF (sem mensalidade depois)'
+      mensal: 'Plano Mensal, R$127,00/mês, sem fidelidade',
+      anual: 'Plano Anual, R$97,00/mês, fidelidade 12 meses (cobrança mensal)',
+      anual_avista: 'Plano Anual à Vista no Pix, R$931,20 com 20% OFF (sem mensalidade depois)'
     };
 
     function planoSelecionado() {

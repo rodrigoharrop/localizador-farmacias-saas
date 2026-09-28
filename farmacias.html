@@ -11,7 +11,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
   .brand-mark { display: flex; justify-content: center; margin-bottom: 14px; }
-  .brand-mark svg { height: 26px; width: auto; }
+  .brand-mark svg { height: 42px; width: auto; }
   :root {
     --primary: #0F7D3F;
     --primary-dark: #0B5C2E;
@@ -266,7 +266,7 @@
       </svg>
     </div>
     <h1>📋 Cadastro de Farmácias Parceiras</h1>
-    <p>Preencha com as farmácias da sua região — leva 5 minutos e acelera a ativação do seu Localizador</p>
+    <p>Preencha com as farmácias da sua região. Leva 5 minutos e acelera a ativação do seu Localizador</p>
   </div>
 
   <div class="wrap">
@@ -301,7 +301,7 @@
       <h3>📤 Já tem uma planilha pronta?</h3>
       <div class="upload-box">
         <div style="font-size:13px; color: var(--muted);">
-          Envie um arquivo <strong>CSV ou Excel (.xlsx)</strong> com suas farmácias — preenchemos tudo automaticamente.<br>
+          Envie um arquivo <strong>CSV ou Excel (.xlsx)</strong> com suas farmácias e preenchemos tudo automaticamente.<br>
           Colunas esperadas: <strong>Nome, Rede, Telefone, Endereço, Bairro, Cidade</strong> (a ordem não importa)
         </div>
         <input type="file" id="fileUpload" accept=".csv,.xlsx,.xls" onchange="handleFileUpload(event)">
@@ -574,7 +574,7 @@
         showToast('Adicione ao menos uma farmácia antes de copiar');
         return;
       }
-      let texto = `📋 *Cadastro de Farmácias — Localizador*\n\n`;
+      let texto = `📋 *Cadastro de Farmácias do Localizador*\n\n`;
       texto += `👤 Representante: ${dados.repNome || '-'}\n`;
       texto += `📍 Região: ${dados.repRegiao || '-'}\n`;
       texto += `📞 Contato: ${dados.repContato || '-'}\n\n`;
