@@ -4,8 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Cadastro de Farmácias da Região</title>
+<link rel="icon" type="image/svg+xml" href="assets/logo/icon.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
+  .brand-mark { display: flex; justify-content: center; margin-bottom: 14px; }
+  .brand-mark svg { height: 26px; width: auto; }
   :root {
     --primary: #0F7D3F;
     --primary-dark: #0B5C2E;
@@ -240,6 +246,25 @@
 <body>
 
   <div class="hero">
+    <div class="brand-mark">
+      <svg viewBox="0 0 480 120" role="img" aria-label="XLocalizador">
+        <defs>
+          <linearGradient id="bmGrad" x1="0" y1="0" x2="120" y2="120" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stop-color="#14915A"/><stop offset="1" stop-color="#0B5C2E"/>
+          </linearGradient>
+        </defs>
+        <rect width="120" height="120" rx="28" fill="url(#bmGrad)"/>
+        <g transform="translate(12,12) scale(4)">
+          <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z" fill="#FFFFFF"/>
+          <g stroke="#0B5C2E" stroke-width="1.7" stroke-linecap="round">
+            <line x1="9.9" y1="6.9" x2="14.1" y2="11.1"/><line x1="14.1" y1="6.9" x2="9.9" y2="11.1"/>
+          </g>
+        </g>
+        <text x="148" y="77" font-family="'Poppins','Segoe UI',-apple-system,sans-serif" letter-spacing="-1">
+          <tspan font-size="56" font-weight="800" fill="#FFFFFF">X</tspan><tspan font-size="46" font-weight="600" fill="#EAF6EF">Localizador</tspan>
+        </text>
+      </svg>
+    </div>
     <h1>📋 Cadastro de Farmácias Parceiras</h1>
     <p>Preencha com as farmácias da sua região — leva 5 minutos e acelera a ativação do seu Localizador</p>
   </div>
