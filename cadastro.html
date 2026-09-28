@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <style>
   .brand-mark { display: flex; justify-content: center; margin-bottom: 18px; }
   .brand-mark svg { height: 28px; width: auto; }
@@ -215,23 +216,6 @@
   .payment-cta .price-today small { font-size: 12px; font-weight: 500; color: var(--muted); }
   .payment-note { font-size: 11px; color: var(--muted); text-align: center; margin: 10px 0 0; }
 
-  .avista-extra { display: none; margin-top: 18px; padding-top: 16px; border-top: 1px dashed var(--border); }
-  .plan-selector:has(input[value="anual_avista"]:checked) ~ .payment-cta .avista-extra { display: block; }
-  .avista-extra-divider { font-size: 11px; font-weight: 700; color: var(--primary); text-transform: uppercase; margin-bottom: 8px; }
-  .btn-secondary-avista {
-    display: block;
-    width: 100%;
-    text-align: center;
-    padding: 13px;
-    border-radius: 10px;
-    border: 1.5px solid var(--primary);
-    background: white;
-    color: var(--primary-dark);
-    font-size: 14px;
-    font-weight: 700;
-    text-decoration: none;
-  }
-  .btn-secondary-avista:hover { background: #F0F8F4; }
 
   .form-state { display: block; }
   .form-state.hidden { display: none; }
@@ -333,21 +317,21 @@
 
         <div class="plan-selector" id="planSelector">
           <label class="plan-option">
-            <input type="radio" name="plano" value="mensal">
+            <input type="radio" name="plano" value="mensal" onchange="atualizarResumoPagamento()">
             <span class="plan-option-body">
               <span class="plan-option-name">Mensal<small>sem fidelidade, cancela quando quiser</small></span>
               <span class="plan-option-price">R$ 127<small>,00/mês</small></span>
             </span>
           </label>
           <label class="plan-option">
-            <input type="radio" name="plano" value="anual" checked>
+            <input type="radio" name="plano" value="anual" checked onchange="atualizarResumoPagamento()">
             <span class="plan-option-body">
               <span class="plan-option-name">Anual<small>fidelidade 12 meses, cobrança mensal</small></span>
               <span class="plan-option-price">R$ 97<small>,00/mês</small></span>
             </span>
           </label>
           <label class="plan-option">
-            <input type="radio" name="plano" value="anual_avista">
+            <input type="radio" name="plano" value="anual_avista" onchange="atualizarResumoPagamento()">
             <span class="plan-option-body">
               <span class="plan-option-name">Anual à vista<span class="badge-discount">-20% Pix</span><small>pague uma vez, sem mensalidade depois</small></span>
               <span class="plan-option-price">R$ 931<small>,20</small></span>
@@ -356,16 +340,9 @@
         </div>
 
         <div class="payment-cta">
-          <div class="price-today">R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small></div>
+          <div class="price-today" id="resumoPrecoHoje">R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small></div>
           <a class="btn btn-primary" id="btnPagarAtivacao" href="https://www.asaas.com/c/0cwnnhv5zbdtf1qt" target="_blank" onclick="return prepararPagamento()">Pagar Ativação →</a>
-
-          <div class="avista-extra">
-            <div class="avista-extra-divider">+ opcional</div>
-            <div class="price-today">R$ 931,20 <small>Anual à vista (-20% Pix) — cobre os próximos 12 meses</small></div>
-            <a class="btn btn-secondary-avista" href="https://www.asaas.com/c/d3kdb6m7nvcj8yzk" target="_blank" onclick="return avisarPlanoAvista()">Pagar Anual à Vista →</a>
-          </div>
-
-          <p class="payment-note">🔒 Pagamento seguro via Asaas — o plano escolhido é enviado automaticamente pro WhatsApp</p>
+          <p class="payment-note">🔒 Pagamento seguro via Asaas — se escolher o Anual à Vista, as 2 cobranças abrem juntas nesse mesmo botão</p>
         </div>
       </div>
     </div>
@@ -375,7 +352,35 @@
   <script>
     // Número de WhatsApp do responsável pelo Localizador (formato internacional, só números)
     const WHATSAPP_DONO = '5585997056733';
-    const EMAIL_DONO = 'rodrigo.harrop@gmail.com';
+    const EMAIL_NOTIFICACAO = 'xdigital.ag@gmail.com';
+
+    // Links de pagamento no Asaas
+    const ASAAS_LINK_ATIVACAO = 'https://www.asaas.com/c/0cwnnhv5zbdtf1qt';
+    const ASAAS_LINK_ANUAL_AVISTA = 'https://www.asaas.com/c/d3kdb6m7nvcj8yzk';
+
+    // TODO: preencher depois de criar uma conta gratuita em emailjs.com
+    // (Public Key em Account > General; Service ID em Email Services; Template ID em Email Templates)
+    const EMAILJS_PUBLIC_KEY = 'SUA_PUBLIC_KEY_AQUI';
+    const EMAILJS_SERVICE_ID = 'SEU_SERVICE_ID_AQUI';
+    const EMAILJS_TEMPLATE_ID = 'SEU_TEMPLATE_ID_AQUI';
+    const emailjsConfigurado = !EMAILJS_PUBLIC_KEY.startsWith('SUA_') && typeof emailjs !== 'undefined';
+    if (emailjsConfigurado) {
+      emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+    }
+
+    function enviarEmailNotificacao(dados) {
+      if (!emailjsConfigurado) {
+        console.warn('EmailJS ainda não configurado — pulando envio de email de notificação.');
+        return;
+      }
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+        to_email: EMAIL_NOTIFICACAO,
+        nome: dados.nome,
+        whatsapp: dados.whatsapp,
+        email: dados.email,
+        regiao: dados.regiao || '-'
+      }).catch(err => console.error('Erro ao enviar email de notificação:', err));
+    }
 
     function validarEmail(email) {
       return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -411,17 +416,9 @@
 
       if (!valido) return;
 
-      const digitosWhats = whatsapp.replace(/\D/g, '');
-      let texto = `🆕 *Novo interessado — Localizador de Farmácias*\n\n`;
-      texto += `👤 Nome: ${nome}\n`;
-      texto += `📱 WhatsApp: ${whatsapp}\n`;
-      texto += `📧 Email: ${email}\n`;
-      if (regiao) texto += `📍 Região: ${regiao}\n`;
+      enviarEmailNotificacao({ nome, whatsapp, email, regiao });
 
-      const urlWhats = `https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`;
-      window.open(urlWhats, '_blank');
-
-      mostrarAgradecimento(digitosWhats);
+      mostrarAgradecimento();
     }
 
     function mostrarAgradecimento() {
@@ -430,6 +427,7 @@
       document.querySelectorAll('.step-pill')[0].classList.remove('active');
       document.querySelectorAll('.step-pill')[0].classList.add('done');
       document.querySelectorAll('.step-pill')[1].classList.add('active');
+      atualizarResumoPagamento();
     }
 
     // Planos disponíveis a partir do 2º mês (a ativação de R$197 já cobre o 1º mês)
@@ -444,19 +442,33 @@
       return el ? el.value : 'anual';
     }
 
-    function prepararPagamento() {
-      // Avisa o plano escolhido no WhatsApp (aba separada) enquanto o botão
-      // segue normalmente para o checkout de pagamento no Asaas
-      const plano = PLANOS[planoSelecionado()];
-      const texto = `Olá! Estou pagando a Ativação do Localizador de Farmácias (R$197,00, já com a 1ª mensalidade).\n\nPlano escolhido a partir do 2º mês: ${plano}`;
-      window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
-      return true;
+    function atualizarResumoPagamento() {
+      const plano = planoSelecionado();
+      const resumo = document.getElementById('resumoPrecoHoje');
+      const btn = document.getElementById('btnPagarAtivacao');
+      if (!resumo || !btn) return;
+      if (plano === 'anual_avista') {
+        resumo.innerHTML = 'R$ 197,00 + R$ 931,20 <small>hoje (ativação + anual à vista, -20% Pix)</small>';
+        btn.textContent = 'Pagar Ativação + Anual à Vista →';
+      } else {
+        resumo.innerHTML = 'R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small>';
+        btn.textContent = 'Pagar Ativação →';
+      }
     }
 
-    function avisarPlanoAvista() {
-      // Aviso separado para o pagamento opcional do Anual à Vista (cobre os próximos 12 meses de uma vez)
-      const texto = `Olá! Estou pagando o Plano Anual à Vista do Localizador de Farmácias (R$931,20, com 20% OFF no Pix) — cobre os próximos 12 meses.`;
+    function prepararPagamento() {
+      const planoValue = planoSelecionado();
+
+      // Se escolheu Anual à Vista, dispara a segunda cobrança automaticamente (aba separada)
+      if (planoValue === 'anual_avista') {
+        window.open(ASAAS_LINK_ANUAL_AVISTA, '_blank');
+      }
+
+      // Avisa o plano escolhido no WhatsApp (aba separada) enquanto o botão
+      // principal segue normalmente para o checkout da Ativação no Asaas
+      const texto = `Olá! Estou pagando a Ativação do Localizador de Farmácias (R$197,00, já com a 1ª mensalidade).\n\nPlano escolhido a partir do 2º mês: ${PLANOS[planoValue]}`;
       window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
+
       return true;
     }
   </script>
