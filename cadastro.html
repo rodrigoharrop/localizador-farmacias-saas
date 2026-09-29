@@ -353,8 +353,10 @@
     const WHATSAPP_DONO = '5585997056733';
 
     // Links de pagamento no Asaas
-    const ASAAS_LINK_ATIVACAO = 'https://www.asaas.com/c/0cwnnhv5zbdtf1qt';
-    const ASAAS_LINK_ANUAL_AVISTA = 'https://www.asaas.com/c/d3kdb6m7nvcj8yzk';
+    const ASAAS_LINK_ATIVACAO = 'https://www.asaas.com/c/0cwnnhv5zbdtf1qt'; // R$197 (ativação + 1ª mensalidade)
+    // TODO: trocar pelo link real assim que criado no Asaas
+    // Produto: "Ativação + Plano Anual à Vista", R$1.028,20, pagamento único
+    const ASAAS_LINK_ATIVACAO_ANUAL_AVISTA = 'LINK_AINDA_NAO_CRIADO';
 
     // Notifica por email (via função serverless /api/notify-lead, que usa o Resend).
     // Só funciona quando o site está rodando na Vercel (não no GitHub Pages, que é 100% estático).
@@ -425,12 +427,16 @@
     const PLANOS = {
       mensal: 'Plano Mensal, R$127,00/mês, sem fidelidade',
       anual: 'Plano Anual, R$97,00/mês, fidelidade 12 meses (cobrança mensal)',
-      anual_avista: 'Plano Anual à Vista no Pix, R$931,20 com 20% OFF (sem mensalidade depois)'
+      anual_avista: 'Plano Anual à Vista no Pix, R$1.028,20 (ativação + 12 meses com 20% OFF), pago de uma vez'
     };
 
     function planoSelecionado() {
       const el = document.querySelector('input[name="plano"]:checked');
       return el ? el.value : 'anual';
+    }
+
+    function linkAtivacaoConfigurado() {
+      return ASAAS_LINK_ATIVACAO_ANUAL_AVISTA !== 'LINK_AINDA_NAO_CRIADO';
     }
 
     function atualizarResumoPagamento() {
@@ -439,35 +445,43 @@
       const btn = document.getElementById('btnPagarAtivacao');
       if (!resumo || !btn) return;
       if (plano === 'anual_avista') {
-        resumo.innerHTML = 'R$ 197,00 + R$ 931,20 <small>hoje (ativação + anual à vista, -20% Pix)</small>';
+        resumo.innerHTML = 'R$ 1.028,20 <small>hoje (ativação + anual à vista, -20% Pix), pagamento único</small>';
         btn.textContent = 'Pagar Ativação + Anual à Vista →';
+        btn.href = linkAtivacaoConfigurado() ? ASAAS_LINK_ATIVACAO_ANUAL_AVISTA : '#';
       } else {
         resumo.innerHTML = 'R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small>';
         btn.textContent = 'Pagar Ativação →';
+        btn.href = ASAAS_LINK_ATIVACAO;
       }
     }
 
     function prepararPagamento() {
       const planoValue = planoSelecionado();
 
-      // Se escolheu Anual à Vista, dispara a segunda cobrança automaticamente (aba separada)
-      if (planoValue === 'anual_avista') {
-        window.open(ASAAS_LINK_ANUAL_AVISTA, '_blank');
+      // Link do Anual à Vista ainda não foi criado no Asaas: avisa e não deixa navegar para "#"
+      if (planoValue === 'anual_avista' && !linkAtivacaoConfigurado()) {
+        alert('O pagamento à vista ainda está sendo configurado. Vamos te chamar no WhatsApp para combinar.');
+        const textoAviso = `Olá! Quero pagar a Ativação + Anual à Vista do Localizador de Farmácias (R$1.028,20, com 20% OFF no Pix), mas o link de pagamento ainda não apareceu no site. Pode me enviar?`;
+        window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(textoAviso)}`, '_blank');
+        revelarPassoFarmacias();
+        return false;
       }
 
       // Avisa o plano escolhido no WhatsApp (aba separada) enquanto o botão
-      // principal segue normalmente para o checkout da Ativação no Asaas
-      const texto = `Olá! Estou pagando a Ativação do Localizador de Farmácias (R$197,00, já com a 1ª mensalidade).\n\nPlano escolhido a partir do 2º mês: ${PLANOS[planoValue]}`;
+      // principal segue normalmente para o checkout no Asaas
+      const texto = `Olá! Estou pagando o Localizador de Farmácias.\n\nPlano escolhido: ${PLANOS[planoValue]}`;
       window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
 
-      // Libera o passo de montar a lista de farmácias, que só faz sentido depois do pagamento
+      revelarPassoFarmacias();
+      return true;
+    }
+
+    function revelarPassoFarmacias() {
       const passoFarmacias = document.getElementById('passoFarmacias');
       if (passoFarmacias) {
         passoFarmacias.style.display = 'block';
         passoFarmacias.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-
-      return true;
     }
   </script>
 
