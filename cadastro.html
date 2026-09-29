@@ -303,16 +303,9 @@
       <p>Assim que possível, entramos em contato pelo WhatsApp para confirmar os próximos passos.</p>
 
       <div class="next-step">
-        <div class="tag">Adiante o processo</div>
-        <h4>📋 Já pode montar a lista de farmácias</h4>
-        <p>Enquanto combinamos os detalhes, você já pode preencher (ou subir a planilha) com as farmácias parceiras da sua região.</p>
-        <a class="btn btn-primary" id="linkFormulario" href="farmacias.html">Preencher farmácias da região →</a>
-      </div>
-
-      <div class="next-step">
-        <div class="tag">A partir do 2º mês</div>
-        <h4>📅 Escolha seu plano</h4>
-        <p>Isso não é um pagamento agora, só define como vamos te cobrar depois dos primeiros 30 dias (já inclusos na ativação).</p>
+        <div class="tag">Primeiro passo</div>
+        <h4>📅 Escolha seu plano e pague a ativação</h4>
+        <p>A escolha do plano não é um pagamento agora, só define como vamos te cobrar a partir do 2º mês (os primeiros 30 dias já estão inclusos na ativação).</p>
 
         <div class="plan-selector" id="planSelector">
           <label class="plan-option">
@@ -343,6 +336,13 @@
           <a class="btn btn-primary" id="btnPagarAtivacao" href="https://www.asaas.com/c/0cwnnhv5zbdtf1qt" target="_blank" onclick="return prepararPagamento()">Pagar Ativação →</a>
           <p class="payment-note">🔒 Pagamento seguro via Asaas. Se escolher o Anual à Vista, as 2 cobranças abrem juntas nesse mesmo botão</p>
         </div>
+      </div>
+
+      <div class="next-step" id="passoFarmacias" style="display: none;">
+        <div class="tag">Depois de pagar</div>
+        <h4>📋 Monte a lista de farmácias</h4>
+        <p>Enquanto confirmamos seu pagamento, você já pode preencher (ou subir a planilha) com as farmácias parceiras da sua região.</p>
+        <a class="btn btn-primary" id="linkFormulario" href="farmacias.html">Preencher farmácias da região →</a>
       </div>
     </div>
 
@@ -459,6 +459,13 @@
       // principal segue normalmente para o checkout da Ativação no Asaas
       const texto = `Olá! Estou pagando a Ativação do Localizador de Farmácias (R$197,00, já com a 1ª mensalidade).\n\nPlano escolhido a partir do 2º mês: ${PLANOS[planoValue]}`;
       window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
+
+      // Libera o passo de montar a lista de farmácias, que só faz sentido depois do pagamento
+      const passoFarmacias = document.getElementById('passoFarmacias');
+      if (passoFarmacias) {
+        passoFarmacias.style.display = 'block';
+        passoFarmacias.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
 
       return true;
     }
