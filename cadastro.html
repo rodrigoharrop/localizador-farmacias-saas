@@ -331,7 +331,7 @@
         <div class="payment-cta">
           <div class="price-today" id="resumoPrecoHoje">R$ 197,00 <small>hoje (ativação + 1ª mensalidade)</small></div>
           <a class="btn btn-primary" id="btnPagarAtivacao" href="https://www.asaas.com/c/0cwnnhv5zbdtf1qt" target="_blank" onclick="return prepararPagamento()">Pagar Ativação →</a>
-          <p class="payment-note">🔒 Pagamento seguro via Asaas. Se escolher o Anual à Vista, as 2 cobranças abrem juntas nesse mesmo botão</p>
+          <p class="payment-note">🔒 Pagamento seguro via Asaas, em uma nova aba</p>
         </div>
       </div>
 
@@ -346,9 +346,6 @@
   </div>
 
   <script>
-    // Número de WhatsApp do responsável pelo Localizador (formato internacional, só números)
-    const WHATSAPP_DONO = '5585997056733';
-
     // Links de pagamento no Asaas
     const ASAAS_LINK_ATIVACAO = 'https://www.asaas.com/c/0cwnnhv5zbdtf1qt'; // R$197 (ativação + 1ª mensalidade)
     const ASAAS_LINK_ATIVACAO_ANUAL_AVISTA = 'https://www.asaas.com/c/npqgifj8zsxjr8gl'; // R$1.028,20 (ativação + anual à vista, pagamento único)
@@ -455,20 +452,35 @@
 
       // Link do Anual à Vista ainda não foi criado no Asaas: avisa e não deixa navegar para "#"
       if (planoValue === 'anual_avista' && !linkAtivacaoConfigurado()) {
-        alert('O pagamento à vista ainda está sendo configurado. Vamos te chamar no WhatsApp para combinar.');
-        const textoAviso = `Olá! Quero pagar a Ativação + Anual à Vista do Localizador de Farmácias (R$1.028,20, com 20% OFF no Pix), mas o link de pagamento ainda não apareceu no site. Pode me enviar?`;
-        window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(textoAviso)}`, '_blank');
-        revelarPassoFarmacias();
+        alert('O pagamento à vista ainda está sendo configurado. Escolha outro plano por enquanto ou tente novamente em instantes.');
         return false;
       }
 
-      // Avisa o plano escolhido no WhatsApp (aba separada) enquanto o botão
-      // principal segue normalmente para o checkout no Asaas
-      const texto = `Olá! Estou pagando o Localizador de Farmácias.\n\nPlano escolhido: ${PLANOS[planoValue]}`;
-      window.open(`https://wa.me/${WHATSAPP_DONO}?text=${encodeURIComponent(texto)}`, '_blank');
+      // Notifica por email (fetch, sem abrir nenhuma janela) qual plano foi
+      // escolhido no momento do pagamento. Não usamos window.open aqui para
+      // não competir com o bloqueador de pop-up e arriscar bloquear o link
+      // de pagamento em si.
+      notificarPagamentoIniciado(planoValue);
 
       revelarPassoFarmacias();
       return true;
+    }
+
+    function notificarPagamentoIniciado(planoValue) {
+      const nome = document.getElementById('nome').value.trim() || 'Não informado';
+      const whatsapp = document.getElementById('whatsapp').value.trim();
+      const email = document.getElementById('email').value.trim();
+      fetch('/api/notify-lead', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          evento: 'pagamento_iniciado',
+          nome,
+          whatsapp,
+          email,
+          plano: PLANOS[planoValue]
+        })
+      }).catch(err => console.error('Erro ao notificar início de pagamento:', err));
     }
 
     function revelarPassoFarmacias() {

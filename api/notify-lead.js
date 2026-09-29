@@ -11,16 +11,36 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { nome, whatsapp, email, regiao } = req.body || {};
+  const { nome, whatsapp, email, regiao, evento, plano } = req.body || {};
 
-  if (!nome || !whatsapp || !email) {
-    return res.status(400).json({ error: 'Dados incompletos (nome, whatsapp e email são obrigatórios)' });
+  if (!nome) {
+    return res.status(400).json({ error: 'Dados incompletos (nome é obrigatório)' });
   }
 
   if (!process.env.RESEND_API_KEY) {
     console.error('RESEND_API_KEY não configurada nas variáveis de ambiente da Vercel.');
     return res.status(500).json({ error: 'Serviço de email não configurado' });
   }
+
+  const ehPagamento = evento === 'pagamento_iniciado';
+  const subject = ehPagamento
+    ? `Pagamento iniciado no XLocalizador: ${nome}`
+    : `Novo interessado no XLocalizador: ${nome}`;
+  const html = ehPagamento
+    ? `
+      <h2>💳 Pagamento iniciado</h2>
+      <p><strong>Nome:</strong> ${escapeHtml(nome)}</p>
+      <p><strong>WhatsApp:</strong> ${escapeHtml(whatsapp || '-')}</p>
+      <p><strong>Email:</strong> ${escapeHtml(email || '-')}</p>
+      <p><strong>Plano escolhido:</strong> ${escapeHtml(plano || '-')}</p>
+    `
+    : `
+      <h2>🆕 Novo interessado no XLocalizador</h2>
+      <p><strong>Nome:</strong> ${escapeHtml(nome)}</p>
+      <p><strong>WhatsApp:</strong> ${escapeHtml(whatsapp || '-')}</p>
+      <p><strong>Email:</strong> ${escapeHtml(email || '-')}</p>
+      <p><strong>Região:</strong> ${escapeHtml(regiao || '-')}</p>
+    `;
 
   try {
     const resendResponse = await fetch('https://api.resend.com/emails', {
@@ -32,14 +52,8 @@ export default async function handler(req, res) {
       body: JSON.stringify({
         from: REMETENTE,
         to: DESTINATARIO,
-        subject: `Novo interessado no XLocalizador — ${nome}`,
-        html: `
-          <h2>🆕 Novo interessado no XLocalizador</h2>
-          <p><strong>Nome:</strong> ${escapeHtml(nome)}</p>
-          <p><strong>WhatsApp:</strong> ${escapeHtml(whatsapp)}</p>
-          <p><strong>Email:</strong> ${escapeHtml(email)}</p>
-          <p><strong>Região:</strong> ${escapeHtml(regiao || '-')}</p>
-        `,
+        subject,
+        html,
       }),
     });
 
