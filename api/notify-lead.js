@@ -63,7 +63,9 @@ export default async function handler(req, res) {
       return res.status(502).json({ error: 'Falha ao enviar email de notificação' });
     }
 
-    return res.status(200).json({ ok: true });
+    const resendData = await resendResponse.json();
+    console.log('Email enviado via Resend, id:', resendData.id);
+    return res.status(200).json({ ok: true, resendId: resendData.id });
   } catch (err) {
     console.error('Erro ao enviar email de notificação:', err);
     return res.status(500).json({ error: 'Erro interno ao enviar notificação' });

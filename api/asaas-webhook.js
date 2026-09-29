@@ -82,12 +82,16 @@ export default async function handler(req, res) {
 
     if (!resendResponse.ok) {
       console.error('Erro da API do Resend:', await resendResponse.text());
+      return res.status(200).json({ ok: true, resendErro: true });
     }
+
+    const resendData = await resendResponse.json();
+    console.log('Email de confirmação enviado via Resend, id:', resendData.id);
+    return res.status(200).json({ ok: true, resendId: resendData.id });
   } catch (err) {
     console.error('Erro ao enviar email de confirmação de pagamento:', err);
+    return res.status(200).json({ ok: true, erroInterno: true });
   }
-
-  return res.status(200).json({ ok: true });
 }
 
 function escapeHtml(str) {
