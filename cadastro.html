@@ -490,6 +490,14 @@
         passoFarmacias.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
     }
+
+    // Pré-seleciona o plano se a pessoa veio de um link tipo cadastro.html?plano=anual
+    (function preSelecionarPlanoPelaURL() {
+      const plano = new URLSearchParams(window.location.search).get('plano');
+      if (!plano) return;
+      const radio = document.querySelector(`input[name="plano"][value="${plano}"]`);
+      if (radio) radio.checked = true;
+    })();
   </script>
 
 </body>
